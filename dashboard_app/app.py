@@ -16,13 +16,18 @@ app = Flask(__name__, static_folder='assets', static_url_path='/assets')
 app.secret_key = 'omaya_secret_key_2024'  # Required for session
 
 # Admin Credentials
-ADMIN_USER = 'admin'
-ADMIN_PASS = 'omaya2024'
+ADMIN_USER = os.environ.get('ADMIN_USER', 'admin')
+ADMIN_PASS = os.environ.get('ADMIN_PASS', 'omaya2024')
 
 # WooCommerce Configuration
-WC_URL = "https://mahmoudbey-oc.com"
-WC_CK = "ck_08595738870196720131498e16f3930a08d0033c"
-WC_CS = "cs_883505c215286282e9b06292d348a7b686001004"
+# Default/Demo values (can be overridden by Environment Variables)
+DEFAULT_WC_URL = "https://mahmoudbey-oc.com"
+DEFAULT_WC_CK = "ck_08595738870196720131498e16f3930a08d0033c"
+DEFAULT_WC_CS = "cs_883505c215286282e9b06292d348a7b686001004"
+
+WC_URL = os.environ.get('WC_URL', DEFAULT_WC_URL)
+WC_CK = os.environ.get('WC_CONSUMER_KEY', DEFAULT_WC_CK)
+WC_CS = os.environ.get('WC_CONSUMER_SECRET', DEFAULT_WC_CS)
 
 wcapi = API(
     url=WC_URL,
