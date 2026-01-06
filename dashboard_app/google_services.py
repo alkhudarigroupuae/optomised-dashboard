@@ -1,4 +1,5 @@
 import os
+import json
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import RunReportRequest, DateRange, Metric, Dimension
 from google.oauth2 import service_account
@@ -8,19 +9,38 @@ from datetime import datetime, timedelta
 
 # Configuration
 KEY_FILE_PATH = 'dashboard_app/credentials.json'  # Put your downloaded JSON key here
-GA_PROPERTY_ID = 'YOUR_GA4_PROPERTY_ID' # e.g., '123456789'
-GSC_SITE_URL = 'sc-domain:yourdomain.com' # or 'https://yourdomain.com/'
+GA_PROPERTY_ID = os.environ.get('GA_PROPERTY_ID', 'YOUR_GA4_PROPERTY_ID')
+GSC_SITE_URL = os.environ.get('GSC_SITE_URL', 'sc-domain:yourdomain.com')
+
+def get_credentials():
+    """
+    Helper to get Google Credentials from Env Var (JSON string) or File.
+    """
+    # 1. Try Env Var with JSON content
+    json_creds = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+    if json_creds:
+        try:
+            info = json.loads(json_creds)
+            return service_account.Credentials.from_service_account_info(info)
+        except Exception as e:
+            print(f"Error parsing GOOGLE_APPLICATION_CREDENTIALS_JSON: {e}")
+
+    # 2. Try Local File
+    if os.path.exists(KEY_FILE_PATH):
+        return service_account.Credentials.from_service_account_file(KEY_FILE_PATH)
+
+    return None
 
 def get_ga4_data():
     """
     Fetches active users and total users from Google Analytics 4.
     """
-    if not os.path.exists(KEY_FILE_PATH):
+    credentials = get_credentials()
+    if not credentials:
         # Return demo/placeholder data if not configured
         return {"active_users": "0", "total_users": "0", "status": "demo"}
 
     try:
-        credentials = service_account.Credentials.from_service_account_file(KEY_FILE_PATH)
         client = BetaAnalyticsDataClient(credentials=credentials)
 
         request = RunReportRequest(
@@ -48,12 +68,12 @@ def get_gsc_data():
     """
     Fetches Clicks and Impressions from Google Search Console.
     """
-    if not os.path.exists(KEY_FILE_PATH):
+    credentials = get_credentials()
+    if not credentials:
         # Return demo/placeholder data if not configured
         return {"clicks": 0, "impressions": 0, "status": "demo"}
 
     try:
-        credentials = service_account.Credentials.from_service_account_file(KEY_FILE_PATH)
         service = build('searchconsole', 'v1', credentials=credentials)
 
         # Dynamic dates: Last 30 days
