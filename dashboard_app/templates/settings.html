@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h2>Platform Settings ⚙️</h2>
+        <p>Customize store, shipping, and payment methods</p>
+    </div>
+    <button class="btn-primary" onclick="showFeatureNotReady('Save Settings')">
+        <i class="fas fa-save"></i>
+        Save Changes
+    </button>
+</div>
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem;">
+    <!-- Settings Sidebar -->
+    <div class="glass-panel" style="padding: 1rem;">
+        <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 0.5rem;"><a href="#" style="display: block; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 8px; color: white; text-decoration: none;">General</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="#" style="display: block; padding: 0.75rem; color: var(--text-muted); text-decoration: none;">Products</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="#" style="display: block; padding: 0.75rem; color: var(--text-muted); text-decoration: none;">Shipping</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="#" style="display: block; padding: 0.75rem; color: var(--text-muted); text-decoration: none;">Payments</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="#" style="display: block; padding: 0.75rem; color: var(--text-muted); text-decoration: none;">Accounts</a></li>
+            <li style="margin-bottom: 0.5rem;"><a href="#" style="display: block; padding: 0.75rem; color: var(--text-muted); text-decoration: none;">Emails</a></li>
+        </ul>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="glass-panel">
+        <h3 style="margin-bottom: 1.5rem; color: white;">General Settings</h3>
+        <form style="display: grid; gap: 1.5rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Store Title</label>
+                <input type="text" value="Omaya Class" style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: white;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Store Description</label>
+                <textarea style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: white; height: 100px;">Luxury store for high-end products</textarea>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Default Currency</label>
+                <select style="width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                    <option>Saudi Riyal (SAR)</option>
+                    <option>US Dollar (USD)</option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

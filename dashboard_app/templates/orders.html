@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h2>Orders History 🛍️</h2>
+        <p>Track and manage customer orders</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <button class="btn-primary" style="background: transparent; border: 1px solid var(--border); color: var(--text-muted);">
+            <i class="fas fa-filter"></i>
+            Filter
+        </button>
+        <button class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Manual Order
+        </button>
+    </div>
+</div>
+
+<div class="glass-panel">
+    <table style="width: 100%; border-collapse: collapse; color: var(--text-muted);">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+                <th style="padding: 1rem;">Order #</th>
+                <th style="padding: 1rem;">Customer</th>
+                <th style="padding: 1rem;">Date</th>
+                <th style="padding: 1rem;">Status</th>
+                <th style="padding: 1rem;">Total</th>
+                <th style="padding: 1rem;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 1rem; color: #fff; font-weight: 600;">#{{ order.id }}</td>
+                <td style="padding: 1rem; color: white;">
+                    {{ order.billing.first_name }} {{ order.billing.last_name }}
+                    <div style="font-size: 0.75rem; color: #666;">{{ order.billing.email }}</div>
+                </td>
+                <td style="padding: 1rem;">{{ order.date_created[:10] }}</td>
+                <td style="padding: 1rem;">
+                    <span style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(245, 158, 11, 0.2);">{{ order.status }}</span>
+                </td>
+                <td style="padding: 1rem; color: white; font-weight: 600;">{{ order.total }} SAR</td>
+                <td style="padding: 1rem;">
+                    <button style="background: none; border: none; color: #888; cursor: pointer; transition: color 0.2s;" onclick="showFeatureNotReady('View Order Details')"><i class="fas fa-eye"></i></button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

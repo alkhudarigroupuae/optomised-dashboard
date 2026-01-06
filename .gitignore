@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+dashboard_app/credentials.json
+venv/
+.idea/
+.vscode/

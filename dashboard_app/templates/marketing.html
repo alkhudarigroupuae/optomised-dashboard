@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}Marketing{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h2>Marketing & Coupons 🏷️</h2>
+        <p>Manage promotional campaigns and discount coupons</p>
+    </div>
+    <button class="btn-primary" onclick="showFeatureNotReady('Create Coupon')">
+        <i class="fas fa-plus"></i>
+        New Coupon
+    </button>
+</div>
+
+<div class="glass-panel">
+    <table style="width: 100%; border-collapse: collapse; color: var(--text-muted);">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+                <th style="padding: 1rem;">Code</th>
+                <th style="padding: 1rem;">Discount Type</th>
+                <th style="padding: 1rem;">Amount</th>
+                <th style="padding: 1rem;">Expiry Date</th>
+                <th style="padding: 1rem;">Usage Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for coupon in coupons %}
+            <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 1rem; color: var(--primary); font-weight: bold; letter-spacing: 1px;">{{ coupon.code }}</td>
+                <td style="padding: 1rem;">{{ coupon.discount_type }}</td>
+                <td style="padding: 1rem;">{{ coupon.amount }}</td>
+                <td style="padding: 1rem;">{{ coupon.date_expires or 'N/A' }}</td>
+                <td style="padding: 1rem;">{{ coupon.usage_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

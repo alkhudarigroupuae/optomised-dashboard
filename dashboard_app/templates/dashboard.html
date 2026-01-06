@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+
+{% block title %}Live Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .led-green {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: #0f0;
+        border-radius: 50%;
+        box-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+        animation: pulse-green 1.5s infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    @keyframes pulse-green {
+        0% { opacity: 0.5; box-shadow: 0 0 2px #0f0; }
+        50% { opacity: 1; box-shadow: 0 0 10px #0f0, 0 0 20px #0f0; }
+        100% { opacity: 0.5; box-shadow: 0 0 2px #0f0; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h2 style="display: flex; align-items: center;">
+            <span class="led-green"></span>
+            Live Dashboard 🌍
+        </h2>
+        <p>Monitor store activity and visitors worldwide in real-time</p>
+    </div>
+    <button class="btn-primary">
+        <i class="fas fa-file-download"></i>
+        Export Report
+    </button>
+</div>
+
+<!-- Stats Row -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="glass-panel" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Total Sales</p>
+            <h3 style="font-size: 1.8rem; font-weight: 700; color: white;" id="total-sales">Loading...</h3>
+        </div>
+        <div style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff;">
+            <i class="fas fa-dollar-sign" style="font-size: 1.2rem;"></i>
+        </div>
+    </div>
+
+    <div class="glass-panel" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Active Orders</p>
+            <h3 style="font-size: 1.8rem; font-weight: 700; color: white;" id="total-orders">...</h3>
+        </div>
+        <div style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff;">
+            <i class="fas fa-shopping-bag" style="font-size: 1.2rem;"></i>
+        </div>
+    </div>
+
+    <div class="glass-panel" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Total Products</p>
+            <h3 style="font-size: 1.8rem; font-weight: 700; color: white;" id="total-products">Loading...</h3>
+        </div>
+        <div style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff;">
+            <i class="fas fa-box-open" style="font-size: 1.2rem;"></i>
+        </div>
+    </div>
+
+    <div class="glass-panel" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Total Customers</p>
+            <h3 style="font-size: 1.8rem; font-weight: 700; color: white;" id="total-customers">Loading...</h3>
+        </div>
+        <div style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff;">
+            <i class="fas fa-users" style="font-size: 1.2rem;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity & Charts -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+    <div class="glass-panel">
+        <h4 style="margin-bottom: 1.5rem; color: #fff;">Sales Analytics (Monthly)</h4>
+        <canvas id="salesChart" height="300"></canvas>
+    </div>
+
+    <div class="glass-panel">
+        <h4 style="margin-bottom: 1.5rem; color: #fff;">Recent Orders</h4>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Dummy Data -->
+            <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-box" style="font-size: 0.8rem; color: #fff;"></i>
+                </div>
+                <div>
+                    <h5 style="font-size: 0.9rem; color: #fff;">New Order #9921</h5>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">5 mins ago - Saudi Arabia</span>
+                </div>
+                <span style="margin-left: auto; color: #fff; font-weight: 600;">$120</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-box" style="font-size: 0.8rem; color: #fff;"></i>
+                </div>
+                <div>
+                    <h5 style="font-size: 0.9rem; color: #fff;">New Order #9920</h5>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">12 mins ago - Egypt</span>
+                </div>
+                <span style="margin-left: auto; color: #fff; font-weight: 600;">$45</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-box" style="font-size: 0.8rem; color: #fff;"></i>
+                </div>
+                <div>
+                    <h5 style="font-size: 0.9rem; color: #fff;">New Order #9919</h5>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">25 mins ago - UAE</span>
+                </div>
+                <span style="margin-left: auto; color: #fff; font-weight: 600;">$340</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Fix Chart.js styling for Vercel Theme
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Sales',
+                data: [12000, 19000, 3000, 5000, 20000, 30000],
+                borderColor: '#ffffff',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#000',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#888', font: { family: 'Inter' } } }
+            },
+            scales: {
+                y: { 
+                    grid: { color: 'rgba(255,255,255,0.05)' }, 
+                    ticks: { color: '#888', font: { family: 'Inter' } } 
+                },
+                x: { 
+                    grid: { color: 'rgba(255,255,255,0.05)' }, 
+                    ticks: { color: '#888', font: { family: 'Inter' } } 
+                }
+            }
+        }
+    });
+
+    // Fetch Real Data
+    fetch('/api/stats')
+        .then(r => r.json())
+        .then(data => {
+            if(data.sales) document.getElementById('total-sales').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR' }).format(data.sales);
+            if(data.orders) document.getElementById('total-orders').innerText = data.orders;
+            if(data.products) document.getElementById('total-products').innerText = data.products;
+            if(data.customers) document.getElementById('total-customers').innerText = data.customers;
+        });
+</script>
+{% endblock %}

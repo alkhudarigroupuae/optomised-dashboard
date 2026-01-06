@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Customers{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h2>Customers Management 👥</h2>
+        <p>View customer details and purchase history</p>
+    </div>
+    <button class="btn-primary" onclick="showFeatureNotReady('Add Customer')">
+        <i class="fas fa-user-plus"></i>
+        Add Customer
+    </button>
+</div>
+
+<div class="glass-panel">
+    <table style="width: 100%; border-collapse: collapse; color: var(--text-muted);">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+                <th style="padding: 1rem;">ID</th>
+                <th style="padding: 1rem;">Name</th>
+                <th style="padding: 1rem;">Email</th>
+                <th style="padding: 1rem;">Registered</th>
+                <th style="padding: 1rem;">Orders</th>
+                <th style="padding: 1rem;">Total Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 1rem;">#{{ customer.id }}</td>
+                <td style="padding: 1rem; color: white; font-weight: 500;">{{ customer.first_name }} {{ customer.last_name }}</td>
+                <td style="padding: 1rem; color: #888;">{{ customer.email }}</td>
+                <td style="padding: 1rem;">{{ customer.date_created[:10] }}</td>
+                <td style="padding: 1rem;">{{ customer.orders_count }}</td>
+                <td style="padding: 1rem; color: #fff; font-weight: 600;">{{ customer.total_spent }} SAR</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

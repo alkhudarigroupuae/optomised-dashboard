@@ -1,0 +1,5 @@
+Verification Results for 'Pastries':
+- Expected: 75
+- Found on store: 75
+- Missing: None
+- Extra in category: None

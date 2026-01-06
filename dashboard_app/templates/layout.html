@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omaya Platform - {% block title %}Dashboard{% endblock %}</title>
+    <!-- Inter Font (Vercel Style) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Globe GL (for 3D Earth) -->
+    <script src="//unpkg.com/globe.gl"></script>
+
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #111111;
+            --primary: #ffffff;
+            --accent: #333333;
+            --gold: #f59e0b;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --border: #333333;
+            --glass: rgba(255, 255, 255, 0.05);
+            --sidebar-width: 250px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #000;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        aside {
+            width: var(--sidebar-width);
+            background: #000000;
+            border-right: 1px solid var(--border); /* Changed from left to right for LTR */
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .brand {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            color: #000;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .brand-text h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+
+        .brand-text span {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .nav-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .nav-section {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #444;
+            margin: 1.5rem 0.5rem 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            color: #888;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-bottom: 0.1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #111;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: #111;
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem; /* LTR margin */
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: #000;
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+        }
+
+        .search-bar {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 1rem;
+            display: flex;
+            align-items: center;
+            width: 300px;
+            transition: all 0.2s;
+        }
+
+        .search-bar:focus-within {
+            width: 350px;
+            border-color: #666;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            margin-left: 0.5rem; /* LTR */
+            outline: none;
+            font-family: 'Inter';
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: #111;
+            color: white;
+            border-color: #666;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #fff;
+            color: black;
+            font-size: 0.6rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: #000;
+        }
+
+        /* Common Components */
+        .glass-panel {
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            border-radius: 8px; /* Sharper corners for Vercel look */
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+            border: 1px solid #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'Inter';
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #ccc;
+            border-color: #ccc;
+        }
+        
+        table th {
+            text-align: left; /* LTR alignment */
+            color: #666;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        /* 3D Globe Container */
+        #globe-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            border: 1px solid var(--border);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fas fa-cube"></i>
+            </div>
+            <div class="brand-text">
+                <h1>Omaya</h1>
+                <span>PLATFORM</span>
+            </div>
+        </div>
+
+        <nav class="nav-scroll">
+            <div class="nav-section">Home</div>
+            <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                <i class="fas fa-globe-americas"></i>
+                <span>Live Dashboard</span>
+            </a>
+            
+            <div class="nav-section">Store Management</div>
+            <a href="{{ url_for('products') }}" class="nav-link {% if request.endpoint == 'products' %}active{% endif %}">
+                <i class="fas fa-box-open"></i>
+                <span>Products</span>
+            </a>
+            <a href="{{ url_for('orders') }}" class="nav-link {% if request.endpoint == 'orders' %}active{% endif %}">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="{{ url_for('customers') }}" class="nav-link {% if request.endpoint == 'customers' %}active{% endif %}">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="{{ url_for('marketing') }}" class="nav-link {% if request.endpoint == 'marketing' %}active{% endif %}">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Coupons</span>
+            </a>
+
+            <div class="nav-section">Analytics & Marketing</div>
+            <a href="{{ url_for('reports') }}" class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="{{ url_for('marketing') }}" class="nav-link {% if request.endpoint == 'marketing' %}active{% endif %}">
+                <i class="fas fa-bullhorn"></i>
+                <span>Marketing</span>
+            </a>
+
+            <div class="nav-section">Settings</div>
+            <a href="{{ url_for('settings') }}" class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Shipping</span>
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                <i class="fas fa-cog"></i>
+                <span>General Settings</span>
+            </a>
+        </nav>
+
+        <div style="padding: 1.5rem; border-top: 1px solid var(--border);">
+            <a href="{{ url_for('logout') }}" style="display: flex; align-items: center; color: #666; text-decoration: none; font-weight: 500; font-size: 0.9rem;">
+                <i class="fas fa-sign-out-alt" style="margin-right: 0.75rem;"></i>
+                Log Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <header>
+            <div class="search-bar">
+                <i class="fas fa-search" style="color: #666;"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+
+            <div class="header-actions">
+                <div class="action-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div class="action-btn">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="text-align: right;">
+                        <h4 style="font-size: 0.85rem; margin-bottom: 2px; color: #fff;">Admin</h4>
+                        <span style="font-size: 0.7rem; color: #666;">Super User</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=fff&color=000" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #333;">
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script>
+        function showFeatureNotReady(featureName) {
+            Swal.fire({
+                title: 'Coming Soon!',
+                text: `The ${featureName} feature is currently under development.`,
+                icon: 'info',
+                background: '#111',
+                color: '#fff',
+                confirmButtonColor: '#fff',
+                confirmButtonText: '<span style="color: #000; font-weight: bold;">Got it</span>'
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

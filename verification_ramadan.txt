@@ -1,0 +1,5 @@
+Verification Results for 'Ramadan':
+- Expected: 26
+- Found on store: 26
+- Missing: None
+- Extra in category: None

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h2>Reports & Analytics 📈</h2>
+        <p>Analyze store performance and sales details</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <button class="btn-primary" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main);" onclick="showFeatureNotReady('Date Filter')">
+            <i class="fas fa-calendar-alt"></i>
+            Last 30 Days
+        </button>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="glass-panel">
+        <h4 style="margin-bottom: 1rem; color: var(--text-main);">Sales by Category</h4>
+        <div style="height: 250px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); border-radius: 8px;">
+            <p style="color: var(--text-muted);">Chart (Coming Soon)</p>
+        </div>
+    </div>
+    <div class="glass-panel">
+        <h4 style="margin-bottom: 1rem; color: var(--text-main);">Top Selling Products</h4>
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-main);">Luxury Product 1</span>
+                <span style="color: #10b981; font-weight: 500;">150 Sales</span>
+            </li>
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-main);">Luxury Product 2</span>
+                <span style="color: #10b981; font-weight: 500;">120 Sales</span>
+            </li>
+            <li style="padding: 0.75rem 0; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-main);">Luxury Product 3</span>
+                <span style="color: #10b981; font-weight: 500;">90 Sales</span>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

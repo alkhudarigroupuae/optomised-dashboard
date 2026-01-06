@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - أمية كلاس</title>
+    <!-- Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #1e1b4b;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            background-color: #0f172a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 50;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .brand h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .brand p {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-right: 4px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-right-color: var(--primary);
+        }
+
+        .nav-link i {
+            margin-left: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout-btn {
+            padding: 1rem;
+            border-top: 1px solid #1e293b;
+        }
+
+        .logout-btn button {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .logout-btn button:hover {
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            z-index: 40;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        /* Scrollable Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(to left, #4f46e5, #3b82f6);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            border-right: 4px solid transparent;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .glass-card.blue { border-right-color: #3b82f6; }
+        .glass-card.indigo { border-right-color: #6366f1; }
+        .glass-card.emerald { border-right-color: #10b981; }
+        .glass-card.amber { border-right-color: #f59e0b; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .card-icon {
+            padding: 0.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .bg-indigo-100 { background-color: #e0e7ff; color: #4f46e5; }
+        .bg-blue-100 { background-color: #dbeafe; color: #2563eb; }
+        .bg-emerald-100 { background-color: #d1fae5; color: #059669; }
+        .bg-amber-100 { background-color: #fef3c7; color: #d97706; }
+
+        .card-footer {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        /* Charts & Activity */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .panel h4 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .activity-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .activity-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1rem;
+        }
+
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .font-bold { font-weight: 700; }
+        .text-gray-500 { color: #6b7280; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            aside {
+                position: absolute;
+                height: 100%;
+                transform: translateX(100%);
+            }
+            aside.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="brand">
+            <h1>أمية كلاس</h1>
+            <p>لوحة التحكم الإدارية</p>
+        </div>
+        
+        <nav>
+            <a href="#" class="nav-link active">
+                <i class="fas fa-home"></i>
+                الرئيسية
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-shopping-bag"></i>
+                الطلبات
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-box"></i>
+                المنتجات
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-users"></i>
+                العملاء
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-chart-line"></i>
+                التقارير
+            </a>
+        </nav>
+
+        <div class="logout-btn">
+            <button onclick="window.location.href='/logout'">
+                <i class="fas fa-sign-out-alt ml-3" style="margin-left: 0.75rem;"></i>
+                تسجيل الخروج
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header>
+            <div style="display: flex; align-items: center;">
+                <!-- Mobile Toggle -->
+                <button id="menu-toggle" style="display: none; background: none; border: none; font-size: 1.5rem; color: #6b7280; margin-left: 1rem; cursor: pointer;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 class="header-title">نظرة عامة</h2>
+            </div>
+            <div class="user-profile">
+                <button style="background: none; border: none; color: #6b7280; font-size: 1.25rem; cursor: pointer;">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <div style="display: flex; align-items: center;">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="Profile" class="avatar">
+                    <span style="margin-right: 0.5rem; font-weight: 600; display: none; @media(min-width: 640px){display:block;}">المسؤول</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Area -->
+        <div class="content-area">
+            
+            <!-- Welcome Banner -->
+            <div class="banner">
+                <h3>مرحباً بك في لوحة التحكم! 👋</h3>
+                <p>إليك ملخص سريع لأداء متجرك اليوم.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <!-- Total Sales -->
+                <div class="glass-card indigo">
+                    <div class="card-header">
+                        <div>
+                            <p class="card-title">إجمالي المبيعات</p>
+                            <h3 class="card-value" id="total-sales-value">...</h3>
+                        </div>
+                        <div class="card-icon bg-indigo-100">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                    </div>
+                    <p class="card-footer" style="color: #10b981; font-weight: 700;">
+                        <i class="fas fa-arrow-up"></i> أداء ممتاز
+                    </p>
+                </div>
+
+                <!-- Orders -->
+                <div class="glass-card blue">
+                    <div class="card-header">
+                        <div>
+                            <p class="card-title">الطلبات</p>
+                            <h3 class="card-value" id="total-orders-value">...</h3>
+                        </div>
+                        <div class="card-icon bg-blue-100">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                    </div>
+                    <p class="card-footer">إجمالي الطلبات المستلمة</p>
+                </div>
+
+                <!-- Products -->
+                <div class="glass-card emerald">
+                    <div class="card-header">
+                        <div>
+                            <p class="card-title">المنتجات</p>
+                            <h3 class="card-value" id="total-products-value">...</h3>
+                        </div>
+                        <div class="card-icon bg-emerald-100">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                    </div>
+                    <p class="card-footer">المنتجات النشطة حالياً</p>
+                </div>
+
+                <!-- Customers -->
+                <div class="glass-card amber">
+                    <div class="card-header">
+                        <div>
+                            <p class="card-title">العملاء</p>
+                            <h3 class="card-value" id="total-customers-value">...</h3>
+                        </div>
+                        <div class="card-icon bg-amber-100">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <p class="card-footer">قاعدة العملاء المسجلين</p>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-container">
+                <!-- Sales Chart -->
+                <div class="panel">
+                    <h4>تحليل المبيعات الشهرية</h4>
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="panel">
+                    <h4>آخر النشاطات</h4>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="activity-item">
+                            <div class="activity-icon bg-blue-100">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div style="margin-right: 1rem;">
+                                <p class="text-sm font-bold">طلب جديد #1024</p>
+                                <p class="text-xs text-gray-500">منذ 15 دقيقة</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon bg-indigo-100">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div style="margin-right: 1rem;">
+                                <p class="text-sm font-bold">عميل جديد</p>
+                                <p class="text-xs text-gray-500">منذ ساعة</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon bg-amber-100">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div style="margin-right: 1rem;">
+                                <p class="text-sm font-bold">تقييم 5 نجوم</p>
+                                <p class="text-xs text-gray-500">منذ 3 ساعات</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Toggle Sidebar on Mobile
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if(window.innerWidth <= 768) {
+            menuToggle.style.display = 'block';
+        }
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Initialize Charts
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [{
+                    label: 'المبيعات (ر.س)',
+                    data: [1200, 1900, 3000, 5000, 2000, 3000],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Cairo' } }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Fetch Real Data
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.orders) document.getElementById('total-orders-value').innerText = data.orders;
+                    if (data.products) document.getElementById('total-products-value').innerText = data.products;
+                    if (data.customers) document.getElementById('total-customers-value').innerText = data.customers;
+                    if (data.sales) {
+                        const formatter = new Intl.NumberFormat('ar-SA', {
+                            style: 'currency',
+                            currency: 'SAR',
+                            minimumFractionDigits: 0
+                        });
+                        const salesVal = parseFloat(data.sales);
+                        document.getElementById('total-sales-value').innerText = 
+                            !isNaN(salesVal) ? formatter.format(salesVal) : data.sales;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching stats:', error);
+                    document.getElementById('total-sales-value').innerText = 'خطأ';
+                });
+        });
+    </script>
+</body>
+</html>
