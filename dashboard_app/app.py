@@ -2,6 +2,16 @@ from flask import Flask, jsonify, send_from_directory, render_template, request,
 from woocommerce import API
 import os
 
+# Try importing Google Services with fallback
+try:
+    from dashboard_app.google_services import get_ga4_data, get_gsc_data
+except ImportError:
+    try:
+        from google_services import get_ga4_data, get_gsc_data
+    except ImportError:
+        def get_ga4_data(): return {"active_users": "N/A", "total_users": "N/A", "status": "error"}
+        def get_gsc_data(): return {"clicks": 0, "impressions": 0, "status": "error"}
+
 app = Flask(__name__, static_folder='assets', static_url_path='/assets')
 app.secret_key = 'omaya_secret_key_2024'  # Required for session
 
@@ -34,7 +44,11 @@ def index():
     except:
         recent_orders = []
 
-    return render_template('dashboard.html', recent_orders=recent_orders)
+    # Fetch Google Data
+    ga4_data = get_ga4_data()
+    gsc_data = get_gsc_data()
+
+    return render_template('dashboard.html', recent_orders=recent_orders, ga4=ga4_data, gsc=gsc_data)
 
 @app.route('/products')
 def products():

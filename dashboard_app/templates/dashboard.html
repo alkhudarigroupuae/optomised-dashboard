@@ -80,6 +80,34 @@
             <i class="fas fa-users" style="font-size: 1.2rem;"></i>
         </div>
     </div>
+
+    <!-- GA4 Active Users -->
+    <div class="glass-panel" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Active Visitors (GA4)</p>
+            <h3 style="font-size: 1.8rem; font-weight: 700; color: white;">
+                {{ ga4.active_users }}
+                {% if ga4.status == 'demo' %}<span style="font-size: 0.8rem; color: #ffcc00;">(Demo)</span>{% endif %}
+            </h3>
+        </div>
+        <div style="width: 50px; height: 50px; background: rgba(52, 168, 83, 0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #34a853;">
+            <i class="fas fa-eye" style="font-size: 1.2rem;"></i>
+        </div>
+    </div>
+
+    <!-- GSC Clicks -->
+    <div class="glass-panel" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">SEO Clicks (30d)</p>
+            <h3 style="font-size: 1.8rem; font-weight: 700; color: white;">
+                {{ gsc.clicks }}
+                {% if gsc.status == 'demo' %}<span style="font-size: 0.8rem; color: #ffcc00;">(Demo)</span>{% endif %}
+            </h3>
+        </div>
+        <div style="width: 50px; height: 50px; background: rgba(66, 133, 244, 0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #4285f4;">
+            <i class="fab fa-google" style="font-size: 1.2rem;"></i>
+        </div>
+    </div>
 </div>
 
 <!-- Recent Activity & Charts -->

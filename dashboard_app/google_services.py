@@ -4,6 +4,8 @@ from google.analytics.data_v1beta.types import RunReportRequest, DateRange, Metr
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
+from datetime import datetime, timedelta
+
 # Configuration
 KEY_FILE_PATH = 'dashboard_app/credentials.json'  # Put your downloaded JSON key here
 GA_PROPERTY_ID = 'YOUR_GA4_PROPERTY_ID' # e.g., '123456789'
@@ -14,7 +16,8 @@ def get_ga4_data():
     Fetches active users and total users from Google Analytics 4.
     """
     if not os.path.exists(KEY_FILE_PATH):
-        return {"error": "Missing credentials.json file"}
+        # Return demo/placeholder data if not configured
+        return {"active_users": "0", "total_users": "0", "status": "demo"}
 
     try:
         credentials = service_account.Credentials.from_service_account_file(KEY_FILE_PATH)
@@ -28,32 +31,40 @@ def get_ga4_data():
 
         response = client.run_report(request=request)
 
-        data = {}
+        data = {"status": "live"}
         if response.rows:
             data['active_users'] = response.rows[0].metric_values[0].value
             data['total_users'] = response.rows[0].metric_values[1].value
+        else:
+            data['active_users'] = "0"
+            data['total_users'] = "0"
         
         return data
     except Exception as e:
-        return {"error": str(e)}
+        print(f"GA4 Error: {e}")
+        return {"active_users": "Err", "total_users": "Err", "error": str(e)}
 
 def get_gsc_data():
     """
     Fetches Clicks and Impressions from Google Search Console.
     """
     if not os.path.exists(KEY_FILE_PATH):
-        return {"error": "Missing credentials.json file"}
+        # Return demo/placeholder data if not configured
+        return {"clicks": 0, "impressions": 0, "status": "demo"}
 
     try:
         credentials = service_account.Credentials.from_service_account_file(KEY_FILE_PATH)
         service = build('searchconsole', 'v1', credentials=credentials)
 
-        # Request data for the last 30 days
+        # Dynamic dates: Last 30 days
+        end_date = datetime.now().strftime('%Y-%m-%d')
+        start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+
         request = {
-            'startDate': '2023-12-01', # You should calculate this dynamically in production
-            'endDate': '2024-01-01',   # You should calculate this dynamically in production
+            'startDate': start_date,
+            'endDate': end_date,
             'dimensions': ['date'],
-            'rowLimit': 10
+            'rowLimit': 100
         }
 
         response = service.searchanalytics().query(siteUrl=GSC_SITE_URL, body=request).execute()
@@ -69,7 +80,9 @@ def get_gsc_data():
                 
         return {
             "clicks": total_clicks,
-            "impressions": total_impressions
+            "impressions": total_impressions,
+            "status": "live"
         }
     except Exception as e:
-        return {"error": str(e)}
+        print(f"GSC Error: {e}")
+        return {"clicks": 0, "impressions": 0, "error": str(e)}
