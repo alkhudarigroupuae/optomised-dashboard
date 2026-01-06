@@ -1,5 +1,7 @@
 # Omaya Dashboard Template
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/alkhudarigroupuae/optomised-dashboard)
+
 This is a Flask-based Dashboard Template designed to connect to any WooCommerce store.
 
 ## Features
