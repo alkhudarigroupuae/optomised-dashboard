@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: omaya-dashboard
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn dashboard_app.app:app
+    plan: free
