@@ -5,3 +5,14 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT dashboard_app.app:app
     plan: free
+    envVars:
+      - key: WC_URL
+        sync: false
+      - key: WC_CONSUMER_KEY
+        sync: false
+      - key: WC_CONSUMER_SECRET
+        sync: false
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASS
+        sync: false
